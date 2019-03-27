@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.hotel.mapper.AdmMapper">
+	<resultMap id="baseMap" type="com.neuedu.hotel.po.Adm">
+		<id property="id" column="id" />
+  		<result property="admName" column="adm_name"/>
+  		<result property="gender" column="gender"/>
+  		<result property="tel" column="tel"/>
+  		<result property="email" column="email"/>
+  		<result property="pwd" column="pwd"/>
+  		<result property="createTime" column="create_time"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="com.neuedu.hotel.po.Adm">
+		insert into tb_adm(adm_name,gender,tel,email,pwd) values
+		(#{admName},#{gender},#{tel},#{email},#{pwd})
+	</insert>
+	<select id="getAdmByTel" resultMap="baseMap">
+		select id,adm_name,gender,tel,email,pwd,create_time from
+		tb_adm where tel=#{tel}
+	</select>
+	
+	<select id="getAdmByemail" resultMap="baseMap">
+		select id,adm_name,gender,tel,email,pwd,create_time from
+		tb_adm where email=#{email}
+	</select>
+	
+	<select id="admListCount" resultType="int">
+		Select count(*) from tb_adm
+		<bind name="keywords" value="'%' + keyword + '%'" />
+		<where>
+			<if test="keyword != ''">
+				adm_name like #{keywords} or
+				tel like #{keywords} or
+				email like #{keywords}
+			</if>
+		</where>
+	</select>
+	
+	<select id="admList" resultMap="baseMap">
+		Select id,adm_name,gender,tel,email,pwd,create_time
+		 from tb_adm
+		<bind name="keywords" value="'%' + keyword + '%'" />
+		<where>
+			<if test="keyword != ''">
+				adm_name like #{keywords} or
+				tel like #{keywords} or
+				email like #{keywords}
+			</if>
+		</where>
+		limit #{begin},#{pageSize}  
+	</select>
+	
+	<select id="getAdmById" resultMap="baseMap">
+		Select id,adm_name,gender,tel,email,pwd,create_time
+		 from tb_adm where id = #{id}
+	</select>
+	
+	<update id="updateById" parameterType="com.neuedu.hotel.po.Adm">
+		update tb_adm
+		<set>
+			<if test="admName != null">
+				adm_name = #{admName},
+			</if>
+			<if test="email != null">
+				email = #{email},
+			</if>
+			<if test="pwd != null">
+				pwd = #{pwd},
+			</if>
+			<if test="gender !='' ">
+				gender = #{gender},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+</mapper>

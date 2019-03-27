@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.hotel.mapper.ClientMapper">
+	<resultMap id="baseMap" type="com.neuedu.hotel.po.Client">
+		<id property="id" column="id" />
+  		<result property="clientName" column="client_name"/>
+  		<result property="gender" column="gender"/>
+  		<result property="tel" column="tel"/>
+  		<result property="email" column="email"/>
+  		<result property="pwd" column="pwd"/>
+  		<result property="createTime" column="create_time"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="com.neuedu.hotel.po.Client">
+		insert into tb_client(client_name,gender,tel,email,pwd) values
+		(#{clientName},#{gender},#{tel},#{email},#{pwd})
+	</insert>
+	<select id="getClientByTel" resultMap="baseMap">
+		select id,client_name,gender,tel,email,pwd,create_time from
+		tb_client where tel=#{tel}
+	</select>
+	
+	<select id="getClientByemail" resultMap="baseMap">
+		select id,client_name,gender,tel,email,pwd,create_time from
+		tb_client where email=#{email}
+	</select>
+	
+	<select id="clientListCount" resultType="int">
+		Select count(*) from tb_client
+		<bind name="keywords" value="'%' + keyword + '%'" />
+		<where>
+			<if test="keyword != ''">
+				client_name like #{keywords} or
+				tel like #{keywords} or
+				email like #{keywords}
+			</if>
+		</where>
+	</select>
+	
+	<select id="clientList" resultMap="baseMap">
+		Select id,client_name,gender,tel,email,pwd,create_time
+		 from tb_client
+		<bind name="keywords" value="'%' + keyword + '%'" />
+		<where>
+			<if test="keyword != ''">
+				client_name like #{keywords} or
+				tel like #{keywords} or
+				email like #{keywords}
+			</if>
+		</where>
+		limit #{begin},#{pageSize}  
+	</select>
+</mapper>
